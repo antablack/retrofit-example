@@ -4,6 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.core.Request
+import com.github.kittinunf.fuel.gson.responseObject
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.synthetic.main.activity_main.*
@@ -13,6 +16,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,7 +25,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         button.setOnClickListener {
-            try {
+            Fuel.get("https://api.myjson.com/bins/zz9t6").responseObject<GUser> { request, response, result ->
+                throw ArithmeticException()
+                val user = result.component1()
+                Log.i("info", user?.name)
+            }
+            /*try {
                 val retrofit: Retrofit = Retrofit.Builder()
                     .baseUrl("https://api.myjson.com/")
                     .addConverterFactory(GsonConverterFactory.create())
@@ -51,20 +60,23 @@ class MainActivity : AppCompatActivity() {
             } catch (e: Error){
                 Log.i("Error", e.message)
                 Log.i("Error", e.stackTrace.toString())
-            }
+            }*/
         }
     }
 
 }
 
-
 data class GUser(
+    var id: Int = 0,
+    var name: String = "")
+
+/*data class GUser(
     @Expose
     @SerializedName("id")
     var id: Int = 0,
     @Expose
     @SerializedName("name")
-    var name: String = "")
+    var name: String = "")*/
 
 interface UserService {
     @GET("/bins/zz9t6")
