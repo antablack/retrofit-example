@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.result.Result
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.gson.responseObject
 import com.google.gson.annotations.Expose
@@ -26,9 +27,15 @@ class MainActivity : AppCompatActivity() {
 
         button.setOnClickListener {
             Fuel.get("https://api.myjson.com/bins/zz9t6").responseObject<GUser> { request, response, result ->
-                throw ArithmeticException()
-                val user = result.component1()
-                Log.i("info", user?.name)
+                when (result) {
+                    is Result.Success -> {
+                        Log.i("info", "Response " + response.statusCode )
+                        val user = result.component1()
+                        Log.i("info", user?.name)
+                    }
+                    is Result.Failure -> {
+                    }
+                }
             }
             /*try {
                 val retrofit: Retrofit = Retrofit.Builder()
@@ -67,7 +74,9 @@ class MainActivity : AppCompatActivity() {
 }
 
 data class GUser(
+    //@Expose(deserialize = false)
     var id: Int = 0,
+    @SerializedName("name")
     var name: String = "")
 
 /*data class GUser(
